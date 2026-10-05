@@ -1,0 +1,30 @@
+# openspec/config.yaml
+schema: spec-driven
+
+context: |
+  Project: StayLedger — a short-term apartment rental management system.
+  Read the project architecture in docs/architecture.md and the code style and conventions in docs/codestyle.md before making any change.
+
+  Stack: Java 21, Spring Boot 3.x, Gradle, PostgreSQL, Liquibase, Telegram Bot API, Spring AI.
+  Architecture: DDD (Domain-Driven Design). Code is organized into three module groups: core_* (core_api, core_impl), infra_* (infra_telegram_impl, infra_ai_impl, infra_postgres_impl, infra_metric_impl), and ms_* (Spring Boot application entry points, e.g. ms_app).
+  Development model: all work is driven by mini-scenarios; each mini-scenario is implemented as a core part (core_api, core_impl) plus one or more infra adapters (infra_*).
+  Transport: internal communication between mini-scenarios uses Spring Events.
+  Core logic:
+    - Order intake via Telegram (Webhook).
+    - AI replies to clients (Spring AI + LLM).
+    - Booking calendar (PostgreSQL + JPA).
+    - Inventory tracking (Inventory entity).
+    - Damage handling: damaged items are just stored in the DB and the prepayment is reduced by the damage amount.
+  Security: Tokens and keys only in .env, never commit to git.
+
+rules:
+  proposal:
+    - "Always state how the change affects the Telegram order flow."
+    - "Assess risks to prepayment data."
+  specs:
+    - "Use Given/When/Then format for scenarios."
+    - "Describe inventory damage scenarios separately."
+    - "Check existing Entities before creating new ones."
+  tasks:
+    - "Each task must end with a commit."
+    - "Telegram-related tasks must include a test with MockWebServer."
