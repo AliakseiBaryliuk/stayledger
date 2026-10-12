@@ -8,7 +8,7 @@ Use the project skills/commands in `.cursor/skills` and `.cursor/commands`:
 
 - `/opsx-explore` — think through a change; do not implement
 - `/opsx-propose` — create planning artifacts only
-- `/opsx-apply` — implement tasks from a change
+- `/opsx-apply` — implement tasks from a change (each task ends in a commit; see `docs/git-workflow.md` for branch, PR, and rebase rules)
 - `/opsx-sync` — merge delta specs into `openspec/specs/`
 - `/opsx-archive` — archive a completed change
 - `/opsx-update` — revise an in-flight change
