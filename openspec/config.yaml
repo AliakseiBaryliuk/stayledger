@@ -2,29 +2,35 @@
 schema: spec-driven
 
 context: |
-  Project: StayLedger — a short-term apartment rental management system.
-  Read the project architecture in docs/architecture.md and the code style and conventions in docs/codestyle.md before making any change.
-
+  StayLedger — short-term apartment rental management.
   Stack: Java 21, Spring Boot 3.x, Gradle, PostgreSQL, Liquibase, Telegram Bot API, Spring AI.
-  Architecture: DDD (Domain-Driven Design). Code is organized into three module groups: core_* (core_api, core_impl), infra_* (infra_telegram_impl, infra_ai_impl, infra_postgres_impl, infra_metric_impl), and ms_* (Spring Boot application entry points, e.g. ms_app).
-  Development model: all work is driven by mini-scenarios; each mini-scenario is implemented as a core part (core_api, core_impl) plus one or more infra adapters (infra_*).
-  Transport: internal communication between mini-scenarios uses Spring Events.
-  Core logic:
-    - Order intake via Telegram (Webhook).
-    - AI replies to clients (Spring AI + LLM).
-    - Booking calendar (PostgreSQL + JPA).
-    - Inventory tracking (Inventory entity).
-    - Damage handling: damaged items are just stored in the DB and the prepayment is reduced by the damage amount.
-  Security: Tokens and keys only in .env, never commit to git.
+  Modular monolith: _core (core-api, core-impl), _infra (adapters), _ms (Spring Boot app).
+  Work is organized as mini-scenarios; they talk via Spring Events.
+  Read docs/architecture.md and docs/codestyle.md before planning or applying.
+  Secrets only in .env, never commit.
+  Write OpenSpec artifacts in English.
 
 rules:
   proposal:
-    - "Always state how the change affects the Telegram order flow."
-    - "Assess risks to prepayment data."
+    - "State affected mini-scenarios and user-visible flow; name what is out of scope."
+    - "If the change touches money, bookings, or inventory, call out data/prepayment risk."
   specs:
-    - "Use Given/When/Then format for scenarios."
-    - "Describe inventory damage scenarios separately."
-    - "Check existing Entities before creating new ones."
+    - "One observable behavior per requirement, with SHALL/MUST; no ports, entities, modules, or frameworks."
+    - "Map each capability to one mini-scenario name when a new capability is introduced."
+    - "Cover failure and edge scenarios, not only the happy path."
+  design:
+    - "Follow the mini-scenario slice: core-api + core-impl + needed adapters only."
+    - "AggregateRoot crosses only to postgres_adapter; other Out ports get complete DTOs/criteria."
+    - "Reuse existing ports/aggregates before adding new ones; cite docs/architecture.md decisions."
   tasks:
-    - "Each task must end with a commit."
-    - "Telegram-related tasks must include a test with MockWebServer."
+    - "Slice tasks by layer (api, impl, adapter, tests); end each task with a commit."
+    - "Plan tests per docs/architecture.md: unit for mappers/factories, integration for ports, e2e happy path last. Telegram HTTP tasks include a MockWebServer test."
+
+operations:
+  apply:
+    guidance:
+      - "Follow docs/codestyle.md (records, nullability, port naming, MapStruct vs factory)."
+      - "Add or update package-info.java so the mini-scenario Javadoc points at openspec/specs/<capability>/spec.md."
+  archive:
+    guidance:
+      - "Confirm delta specs still match shipped behavior before merging into main specs."

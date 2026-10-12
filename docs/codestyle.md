@@ -2,14 +2,20 @@
 
 ## General conventions
 
-- Use **Lombok** (`@Data`, `@Builder`). Always add `@Builder(toBuilder = true)`.
-- Keep **DTOs separated from Entities** (mapping via **MapStruct**).
+- Keep **DTOs separated from Entities** (mapping via **MapStruct** or a factory).
 - All external calls (Telegram, LLM) go through **Resilience4j**.
+
+### Types: records vs Lombok
+
+- Use a **`record`** for immutable data carriers: DTOs, value objects, commands,
+  requests, criteria, and events. Do **not** put Lombok `@Data` / `@Builder` on
+  records.
+- Use **Lombok** (`@Data`, `@Builder(toBuilder = true)`) only on **mutable** types
+  that need it (typically JPA entities). Always add `@Builder(toBuilder = true)`
+  when `@Builder` is used.
 
 ## Records
 
-- Use **`record`** where possible — for immutable data carriers such as DTOs,
-  value objects, and events.
 - Always add a **Javadoc** above the `record`.
 - Document **every** record component with a `@param` tag, placed above the record
   (inside the same Javadoc as the record).
@@ -25,7 +31,7 @@ Example:
  */
 public record Data(
     @Nullable Object a,
-    @NonNull Object b
+    @Nonnull Object b
 ) {}
 ```
 
@@ -37,7 +43,7 @@ public record Data(
 ```java
 public record Data(
     @Nullable Object a,
-    @NonNull Object b
+    @Nonnull Object b
 ) {}
 ```
 
@@ -48,7 +54,7 @@ public record Data(
 public record Data(
     @Nullable Object a,
 
-    @NonNull
+    @Nonnull
     @NotBlank
     String b,
 
@@ -68,9 +74,14 @@ Components are ordered **top to bottom**:
 
 ## Nullability annotations
 
-- Annotate **every field, method parameter, and method return value** with a
-  nullability annotation: `@Nonnull` / `@NonNull` for non-null, `@Nullable` for
-  nullable.
+Use **Jakarta** nullability annotations only:
+
+- `jakarta.annotation.Nonnull` — non-null
+- `jakarta.annotation.Nullable` — nullable
+
+Do not mix in JetBrains, Lombok, or Spring `@NonNull` / `@NotNull`.
+
+- Annotate **every field, method parameter, and method return value**.
 - For a method's **return value**, write the annotation on its own line **above**
   the method (not on the return type).
 
@@ -79,8 +90,8 @@ Example:
 ```java
 @Nonnull
 public String get(
-    @NonNull Object a,
-    @NonNull Object b,
+    @Nonnull Object a,
+    @Nonnull Object b,
     @Nullable Object c
 ) {
 
@@ -97,8 +108,8 @@ Example (method with more than 2 arguments):
 ```java
 @Nonnull
 public String get(
-    @NonNull Object a,
-    @NonNull Object b,
+    @Nonnull Object a,
+    @Nonnull Object b,
     @Nullable Object c
 ) {
 
@@ -112,9 +123,11 @@ Ports are the domain interfaces of a mini-scenario. The naming rules are:
 - Port names follow the package layout `com.stayledger.<mini-scenario>.<state>.port.*`:
   - **Incoming ports** live under `com.stayledger.<mini-scenario>.<state>.port.incoming`.
   - **Outgoing ports** live under `com.stayledger.<mini-scenario>.<state>.port.outgoing`.
-- An **IncomingPort** receives an event. Its class name must end with `...In`,
-  while the argument it accepts is named after the event **without** the `...In`
-  suffix (e.g. port `<Name>In` accepts an argument `<Name>`).
+- An **IncomingPort** accepts a **command or request**. Its class name must end
+  with `...In`, while the argument it accepts is named after that type **without**
+  the `...In` suffix (e.g. port `<Name>In` accepts `<Name>`). The argument is not a
+  Spring Event; events are inter-scenario transport only (see
+  [docs/architecture.md](architecture.md)).
 - An **OutgoingPort** class name must end with `...Out`.
 - Always add a **Javadoc** to every port interface.
 
