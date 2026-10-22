@@ -1,16 +1,23 @@
-# StayLedger — agent entry
+# StayLedger — Agent Instructions
 
-This project uses **OpenSpec** (schema `spec-driven`). Planning and apply follow `openspec/config.yaml`; do not copy that context into artifacts.
+This repository uses Cline rules stored in `.cline/rules/`. Read them before making changes.
 
-## Workflows
+## Rule files
 
-Use the project skills/commands in `.cursor/skills` and `.cursor/commands`:
+- `.cline/rules/00-universal.md` — always-active project rules
+- `.cline/rules/01-architecture.md` — modular monolith and mini-scenario architecture
+- `.cline/rules/02-git-workflow.md` — branch, commit-message, pull-request policy
+- `.cline/rules/03-java-style.md` — Java naming, records, nullability (`.java` files)
+- `.cline/rules/04-sdd.md` — Spec Driven Development rules
 
-- `/opsx-explore` — think through a change; do not implement
-- `/opsx-propose` — create planning artifacts only
-- `/opsx-apply` — implement tasks from a change (each task ends in a commit; see `docs/git-workflow.md` for branch, PR, and rebase rules)
-- `/opsx-sync` — merge delta specs into `openspec/specs/`
-- `/opsx-archive` — archive a completed change
-- `/opsx-update` — revise an in-flight change
+## Documentation
 
-Product behavior lives in `openspec/specs/` (and change deltas under `openspec/changes/`). Structure is in `docs/architecture.md`. Java form is in `docs/codestyle.md`.
+- `docs/architecture.md` — DDD, modular monolith, mini-scenarios
+- `docs/codestyle.md` — Java code style and conventions
+- `docs/git-workflow.md` — Git workflow and commit message format
+- `docs/sdd.md` — Spec Driven Development principles
+
+## Specification
+
+Specifications live in `openspec/specs/<capability>/spec.md` (OpenSpec).
+Each mini-scenario maps 1:1 to a capability spec; `package-info.java` must point at it.

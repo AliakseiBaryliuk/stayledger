@@ -1,9 +1,7 @@
 ---
-description: StayLedger Java naming, records, and nullability
-globs: "**/*.java"
-alwaysApply: false
+paths:
+  - "**/*.java"
 ---
-
 # Java style
 
 Follow `docs/codestyle.md` for examples and full rules. Do not mix other nullability annotations.

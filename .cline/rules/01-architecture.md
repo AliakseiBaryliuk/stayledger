@@ -1,11 +1,10 @@
 ---
-description: StayLedger modular-monolith and mini-scenario architecture
-alwaysApply: true
+paths:
+  - "**/*"
 ---
-
 # Architecture
 
-Read `docs/architecture.md` before changing structure, ports, or tests. Do not invent modules outside that document.
+Follow `docs/architecture.md` before changing structure, ports, or tests. Do not invent modules outside that document.
 
 - Slice each mini-scenario as `core-api` + `core-impl` + only the adapters it needs (`_infra`). Wire the app in `_ms`.
 - Incoming ports (`...In`) take a command/request. Spring Events are transport **between** mini-scenarios only, never the `...In` argument.
