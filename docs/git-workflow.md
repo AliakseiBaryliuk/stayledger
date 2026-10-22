@@ -62,3 +62,20 @@ git config --global pull.rebase true
 git config --global rerere.enabled true
 git config --global branch.autoSetupRebase always
 ```
+
+## Pre-push hook (recommended)
+
+A versioned `hooks/pre-push` script enforces branch discipline automatically.
+Install it once per clone:
+
+```bash
+git config core.hooksPath hooks
+chmod +x hooks/pre-push   # on Windows: Git Bash or `attrib +R hooks/pre-push`
+```
+
+The hook checks:
+- The current branch is not `master`
+- Exactly 1 commit ahead of `origin/master` (squashed)
+- The last commit subject matches `[<task-number>] <summary>` or `[NO_TASK] <summary>`
+
+Bypass is possible with `--no-verify` (intentional override, not a default).

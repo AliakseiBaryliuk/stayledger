@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Pre-push hook for StayLedger.
+# Ensures branch discipline before every push.
+# Install: git config core.hooksPath hooks
+
+set -e
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Never push master directly
+if [ "$BRANCH" = "master" ]; then
+  echo "ERROR: Cannot push directly to master. Use a branch + pull request."
+  exit 1
+fi
+
+# Ensure origin/master exists locally
+if ! git rev-parse --verify origin/master >/dev/null 2>&1; then
+  echo "WARNING: origin/master not found. Run 'git fetch origin' first."
+  exit 1
+fi
+
+# Check that the branch has exactly 1 commit ahead of origin/master (squashed)
+COMMITS_AHEAD=$(git rev-list --count origin/master..HEAD 2>/dev/null || echo "0")
+if [ "$COMMITS_AHEAD" -ne 1 ]; then
+  echo "ERROR: Branch has $COMMITS_AHEAD commit(s) ahead of origin/master."
+  echo "Squash all NEW branch commits into one before pushing."
+  echo "Run: git fetch origin && git rebase -i origin/master"
+  exit 1
+fi
+
+# Check commit message format: [<task-tag>] <English summary>
+LAST_MSG=$(git log -1 --format=%s)
+if ! echo "$LAST_MSG" | grep -qE '^\[(NO_TASK|[0-9]+)\] '; then
+  echo "ERROR: Commit message does not match required format."
+  echo "Expected: [<task-number>] <summary> or [NO_TASK] <summary>"
+  echo "Got: $LAST_MSG"
+  exit 1
+fi
+
+echo "Pre-push checks passed."
+exit 0
