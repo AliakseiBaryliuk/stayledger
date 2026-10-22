@@ -1,8 +1,3 @@
----
-description: StayLedger branch, commit-message, pull-request, and rebase policy
-alwaysApply: true
----
-
 # Git workflow
 
 Follow `docs/git-workflow.md`. The integration branch is `master`.
