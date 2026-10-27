@@ -1,23 +1,58 @@
 # StayLedger — Agent Instructions
 
-This repository uses Cline rules stored in `.cline/rules/`. Read them before making changes.
+Codex reads this file as the repository's project guidance. Read it before making changes.
 
-## Rule files
+## Project documentation
 
-- `.cline/rules/00-universal.md` — always-active project rules
-- `.cline/rules/01-architecture.md` — modular monolith and mini-scenario architecture
-- `.cline/rules/02-git-workflow.md` — branch, commit-message, pull-request policy
-- `.cline/rules/03-java-style.md` — Java naming, records, nullability (`.java` files)
-- `.cline/rules/04-sdd.md` — Spec Driven Development rules
-
-## Documentation
-
-- `docs/architecture.md` — DDD, modular monolith, mini-scenarios
+- `docs/architecture.md` — DDD, modular monolith, and mini-scenarios
 - `docs/codestyle.md` — Java code style and conventions
-- `docs/git-workflow.md` — Git workflow and commit message format
+- `docs/git-workflow.md` — branch, commit-message, and pull-request policy
 - `docs/sdd.md` — Spec Driven Development principles
 
-## Specification
+Specifications live in `openspec/specs/<capability>/spec.md` (OpenSpec). Each mini-scenario maps 1:1 to a capability spec; `package-info.java` must point at it.
 
-Specifications live in `openspec/specs/<capability>/spec.md` (OpenSpec).
-Each mini-scenario maps 1:1 to a capability spec; `package-info.java` must point at it.
+## Universal project rules
+
+These rules apply to all files in the StayLedger project.
+
+- Read the applicable project guidance in this file before making changes.
+- Follow the existing code style and conventions of the project.
+- Commit messages must start with a task tag: `[NO_TASK]` or `[<task-number>]`.
+- Never commit directly to `master`; use branches and pull requests.
+- The specification (`docs/sdd.md`) is the single source of truth for new features.
+
+## Architecture
+
+Follow `docs/architecture.md` before changing structure, ports, or tests. Do not invent modules outside that document.
+
+- Slice each mini-scenario as `core-api` + `core-impl` + only the adapters it needs (`_infra`). Wire the app in `_ms`.
+- Incoming ports (`...In`) take a command/request. Spring Events are transport **between** mini-scenarios only, never the `...In` argument.
+- Pass `AggregateRoot` only to `postgres_adapter`. Other `...Out` ports get complete DTOs or criteria.
+- Map a mini-scenario 1:1 to `openspec/specs/<capability>/spec.md`. Point `package-info.java` at that spec.
+- Tests: unit for mappers/factories, integration for ports, MockWebServer for Telegram HTTP, e2e happy path last in `_ms`.
+
+## Git workflow
+
+Follow `docs/git-workflow.md`. The integration branch is `stayledger-codex`.
+
+- Never commit or push directly to `stayledger-codex`; land changes via a branch plus a pull request.
+- Before every push: `git fetch`, update `stayledger-codex` from `origin/stayledger-codex`, rebase the working branch onto `stayledger-codex`, then push.
+- After a rebase push use `--force-with-lease`; never `--force`/`-f`.
+- Never rewrite `stayledger-codex`; resolve conflicts only in the working branch.
+- Commit subjects start with a task tag plus a concise English summary: `[NO_TASK] <summary>` when there is no tracker task, `[<task-number>] <summary>` when there is one. Never invent a number.
+- The `[<task-number>]` tag must match the task id recorded in the `package-info.java` of the mini-scenario the change touches; when that file records none, use `[NO_TASK]`.
+
+## Java style (for `.java` files)
+
+Follow `docs/codestyle.md` for examples and full rules. Do not mix other nullability annotations.
+
+- Immutable carriers (DTO, VO, command/request, criteria, event) are `record`s. No Lombok `@Data`/`@Builder` on records.
+- Lombok `@Data` and `@Builder(toBuilder = true)` only on mutable types that need them (typically JPA entities).
+- Nullability: `jakarta.annotation.Nonnull` and `jakarta.annotation.Nullable` on every field, parameter, and return. Return annotation goes on its own line above the method.
+- Ports: `...In` / `...Out` in `com.stayledger.<mini-scenario>.<state>.port.incoming|outgoing`. Field names drop the `In`/`Out` suffix.
+- MapStruct `AToBMapper.map` when mapping is 1:1 or at most three `@Mapping`s; otherwise `BFactory.create`.
+- External calls (Telegram, LLM) go through Resilience4j.
+
+## Spec Driven Development (SDD)
+
+Before implementing new features, read `docs/sdd.md` — the specification is the single source of truth here. Changes to the specification must be documented in `docs/sdd.md`. These SDD rules are contained in this section.
