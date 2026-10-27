@@ -1,13 +1,13 @@
 # StayLedger — Git workflow
 
-The integration branch is `master` (`origin/master`). `origin/main` is legacy; do not target it.
+The integration branch is `stayledger-codex` (`origin/stayledger-codex`). `master` and `origin/main` are legacy; do not target them.
 
-## Master only via pull request
+## Integration branch only via pull request
 
-- Never commit or push directly to `master`.
-- Flow: branch off `master` -> commit(s) -> push the branch -> pull request -> merge.
+- Never commit or push directly to `stayledger-codex`.
+- Flow: branch off `stayledger-codex` -> commit(s) -> push the branch -> pull request -> merge.
 - Branch naming: `<type>/<short-topic>` (`feature/booking-calendar`, `fix/...`, `chore/...`).
-- Merge with **Rebase and merge** to keep a linear history; no merge commits into `master`.
+- Merge with **Rebase and merge** to keep a linear history; no merge commits into `stayledger-codex`.
 
 ## Commit messages
 
@@ -39,20 +39,20 @@ Commits made before this rule (`init app`, `define config`) stay as they are; ne
 
 ```bash
 git fetch origin
-git switch master
-git rebase origin/master        # or: git pull --ff-only
+git switch stayledger-codex
+git rebase origin/stayledger-codex        # or: git pull --ff-only
 git switch <my-branch>
-git rebase master               # bring master into the working branch
+git rebase stayledger-codex               # bring the integration branch into the working branch
 # resolve conflicts, run the tests from docs/architecture.md
 git push --force-with-lease     # never plain --force / -f
 ```
 
 Repeat this cycle before **every** push, not just the first one. After the pull request is
-merged, delete the branch and start the next one from a fresh `master`.
+merged, delete the branch and start the next one from a fresh `stayledger-codex`.
 
 ## Conflicts
 
-- Resolve conflicts in the working branch; never rewrite or resolve inside `master`.
+- Resolve conflicts in the working branch; never rewrite or resolve inside `stayledger-codex`.
 - Re-run tests before pushing: unit for mappers/factories, integration for ports, e2e happy path last.
 
 ## Local helpers (once per machine)
