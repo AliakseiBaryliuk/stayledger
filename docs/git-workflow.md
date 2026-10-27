@@ -35,6 +35,11 @@ Examples:
 
 Commits made before this rule (`init app`, `define config`) stay as they are; new commits use the tag.
 
+## Before opening a pull request
+
+- Squash all commits added on the working branch since it branched from `stayledger-codex` into one commit before creating the pull request. Do not squash commits inherited from `stayledger-codex`.
+- The squashed commit subject must follow the task-tag format above.
+
 ## Rebase before every push to remote
 
 ```bash
