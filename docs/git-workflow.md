@@ -1,35 +1,35 @@
 # StayLedger — Git workflow
 
-> Этот документ — рабочий процесс Git для проекта StayLedger. Он дополняет
-> [`.cline/rules/02-git-workflow.md`](../.cline/rules/02-git-workflow.md) и
-> [`docs/architecture.md`](architecture.md); спецификации — в
+> This document is the Git workflow for the StayLedger project. It supplements
+> [`.cline/rules/02-git-workflow.md`](../.cline/rules/02-git-workflow.md) and
+> [`docs/architecture.md`](architecture.md); specifications live in
 > `openspec/specs/<capability>/spec.md`.
 
-Интеграционная ветка — `stayledger-cline` (`origin/stayledger-cline`). `origin/main` legacy, на неё не нацеливаемся.
+The integration branch is `stayledger-cline` (`origin/stayledger-cline`). `origin/main` is legacy; do not target it.
 
-## Ветвление
+## Branching
 
-- Никогда не коммитим и не пушим напрямую в `stayledger-cline`.
-- Поток: ответвляемся от `stayledger-cline` → коммиты → пуш ветки → pull request → мержим.
-- Именование веток: `<type>/<short-topic>` (`feature/booking-calendar`, `fix/...`, `chore/...`).
-- Каждая ветка реализует **одну** задачу / мини-сценарий.
+- Never commit or push directly to `stayledger-cline`.
+- Flow: branch off `stayledger-cline` → commits → push branch → pull request → merge.
+- Branch naming: `<type>/<short-topic>` (`feature/booking-calendar`, `fix/...`, `chore/...`).
+- Each branch implements **one** task / mini-scenario.
 
-## Коммитные сообщения
+## Commit messages
 
-Каждый субъект начинается с тега задачи и краткого описания на английском:
+Every subject starts with a task tag, followed by a concise summary in English:
 
 ```
-[NO_TASK] <краткое описание>
-[<task-number>] <краткое описание>
+[NO_TASK] <concise summary>
+[<task-number>] <concise summary>
 ```
 
-- `[NO_TASK]` — нет трекер-задачи (например, работа только над OpenSpec-изменением, или мини-сценарий, у которого `package-info.java` не содержит task id).
-- `[<task-number>]` — id задачи из трекера ровно как есть (`[1234]`, `[SL-42]`). Должен совпадать с id, записанным в `package-info.java` мини-сценария, который затронут коммитом (см. [`docs/architecture.md`](architecture.md)). Никогда не придумываем номера.
-- Описание: короткое, повелительное наклонение, без воды («some fixes», «WIP»), без точки в конце.
-- Коммитные сообщения пишем на английском — как и весь остальной репозиторий.
-- Необязательное тело: почему нужен изменение. Кратко.
+- `[NO_TASK]` — no tracker task for this change (for example, work that exists only as an OpenSpec change, or a mini-scenario whose `package-info.java` records no task id).
+- `[<task-number>]` — the tracker id exactly as it is (`[1234]`, `[SL-42]`). It must match the task id recorded in the `package-info.java` of the mini-scenario the commit touches (see [`docs/architecture.md`](architecture.md)). Never invent a number.
+- Summary: short, imperative, to the point; no filler ("some fixes", "WIP"), no trailing period.
+- Commit messages are written in English — like the rest of the repository.
+- Optional body: why the change is needed. Keep it brief.
 
-Примеры, привязанные к мини-сценариям StayLedger:
+Examples tied to StayLedger mini-scenarios:
 
 ```
 [NO_TASK] add git workflow rules
@@ -38,41 +38,43 @@
 [SL-42] implement inventory postgres_adapter
 ```
 
-Коммиты, сделанные до введения этого правила (`init app`, `define config`), остаются как есть; новые коммиты используют тег.
+Commits made before this rule (`init app`, `define config`) stay as they are; new commits use the tag.
 
-## Squash перед пушем
+## Squash before push
 
-Ветка может содержать промежуточные коммиты во время разработки. Перед пушем
-сжимаем **только новые** коммиты этой ветки (не коммиты, уже существующие в `stayledger-cline`)
-в один коммит с тегом и описанием:
+A branch may contain intermediate commits during development. Before pushing,
+squash **only the new** commits of this branch (not commits already present in
+`stayledger-cline`) into a single commit with a tag and description:
 
 ```
 [<task-number>] <feature summary>
 [NO_TASK] <feature summary>
 ```
 
-Используем `git rebase -i` или `git reset --soft` onto `stayledger-cline`, затем один коммит.
+Use `git rebase -i` or `git reset --soft` onto `stayledger-cline`, then commit once.
 
-## Rebase перед каждым пушем
+## Rebase before every push
 
 ```bash
 git fetch origin
 git switch stayledger-cline
-git rebase origin/stayledger-cline        # или: git pull --ff-only
+git rebase origin/stayledger-cline        # or: git pull --ff-only
 git switch <my-branch>
-git rebase stayledger-cline               # подтягиваем stayledger-cline в рабочую ветку
-# решаем конфликты, прогоняем тесты (см. docs/architecture.md)
-git push --force-with-lease     # никогда просто --force / -f
+git rebase stayledger-cline               # bring stayledger-cline into the working branch
+# resolve conflicts, run tests (see docs/architecture.md)
+git push --force-with-lease     # never plain --force / -f
 ```
 
-Повторяем этот цикл **перед каждым** пушем, не только первым. После мержа pull request'а удаляем ветку и начинаем следующую от свежего `stayledger-cline`.
+Repeat this cycle before **every** push, not just the first one. After the
+pull request is merged, delete the branch and start the next one from a fresh
+`stayledger-cline`.
 
-## Конфликты
+## Conflicts
 
-- Разрешаем конфликты в рабочей ветке; никогда не переписываем и не разрешаем внутри `stayledger-cline`.
-- Перед пушем прогоняем тесты: unit для мапперов/фабрик, integration для портов, MockWebServer для Telegram HTTP, e2e happy path в конце мини-сценария.
+- Resolve conflicts in the working branch; never rewrite or resolve inside `stayledger-cline`.
+- Before pushing, run tests: unit for mappers/factories, integration for ports, MockWebServer for Telegram HTTP, e2e happy path at the end of the mini-scenario.
 
-## Локальные настройки (один раз на машину)
+## Local helpers (once per machine)
 
 ```bash
 git config --global pull.rebase true
@@ -80,28 +82,28 @@ git config --global rerere.enabled true
 git config --global branch.autoSetupRebase always
 ```
 
-## Pre-push хук (рекомендуется)
+## Pre-push hook (recommended)
 
-Версийный скрипт `hooks/pre-push` автоматически контролирует дисциплину веток.
-Устанавливаем один раз на клон:
+A versioned `hooks/pre-push` script enforces branch discipline automatically.
+Install it once per clone:
 
 ```bash
 git config core.hooksPath hooks
-chmod +x hooks/pre-push   # на Windows: Git Bash или `attrib +R hooks/pre-push`
+chmod +x hooks/pre-push   # on Windows: Git Bash or `attrib +R hooks/pre-push`
 ```
 
-Хук проверяет:
-- Текущая ветка — не `stayledger-cline`
-- Ровно 1 коммит впереди от `origin/stayledger-cline` (сжатый)
-- Субъект последнего коммита соответствует `[<task-number>] <summary>` или `[NO_TASK] <summary>`
-- Есть одобренный pull request (хотя бы 1 approval)
+The hook checks:
+- The current branch is not `stayledger-cline`
+- Exactly 1 commit ahead of `origin/stayledger-cline` (squashed)
+- The last commit subject matches `[<task-number>] <summary>` or `[NO_TASK] <summary>`
+- There is an approved pull request (at least 1 approval)
 
-Байпас возможен через `--no-verify` (намеренное переопределение, не по умолчанию).
+Bypass is possible with `--no-verify` (intentional override, not a default).
 
-## Привязка к мини-сценариям StayLedger
+## Tying to StayLedger mini-scenarios
 
-Каждый коммит должен затрагивать конкретный мини-сценарий, реализованный как
-`core-api` + `core-impl` + адаптеры (`_infra`). Структура:
+Every commit must touch a concrete mini-scenario, implemented as
+`core-api` + `core-impl` + adapters (`_infra`). Structure:
 
 ```
 _core/src/main/java/com/stayledger/<mini-scenario>/
@@ -116,12 +118,12 @@ _ms/src/main/resources/
   application.yaml
 ```
 
-`package-info.java` верхнего пакета мини-сценария должен ссылаться на
-спецификацию OpenSpec: `openspec/specs/<capability>/spec.md`.
+`package-info.java` at the top-level package of the mini-scenario must point to
+the OpenSpec specification: `openspec/specs/<capability>/spec.md`.
 
-### Карта capability (из `docs/architecture.md`)
+### Capability map (from `docs/architecture.md`)
 
-| Мини-сценарий | Capability (`openspec/specs/<id>`) | Типичные адаптеры |
+| Mini-scenario | Capability (`openspec/specs/<id>`) | Typical adapters |
 |---|---|---|
 | `telegram-order-intake` | `telegram-order-intake` | `telegram_adapter` |
 | `ai-client-replies` | `ai-client-replies` | `ai_adapter` |
@@ -129,4 +131,4 @@ _ms/src/main/resources/
 | `inventory` | `inventory` | `postgres_adapter` |
 | `damage-and-prepayment` | `damage-and-prepayment` | `postgres_adapter` |
 
-При добавлении нового мини-сценария добавляем строку в эту таблицу.
+When introducing a new mini-scenario, add a row to this table.
