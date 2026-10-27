@@ -5,12 +5,12 @@
 > [`docs/architecture.md`](architecture.md); спецификации — в
 > `openspec/specs/<capability>/spec.md`.
 
-Интеграционная ветка — `master` (`origin/master`). `origin/main` legacy, на неё не нацеливаемся.
+Интеграционная ветка — `stayledger-cline` (`origin/stayledger-cline`). `origin/main` legacy, на неё не нацеливаемся.
 
 ## Ветвление
 
-- Никогда не коммитим и не пушим напрямую в `master`.
-- Поток: ответвляемся от `master` → коммиты → пуш ветки → pull request → мержим.
+- Никогда не коммитим и не пушим напрямую в `stayledger-cline`.
+- Поток: ответвляемся от `stayledger-cline` → коммиты → пуш ветки → pull request → мержим.
 - Именование веток: `<type>/<short-topic>` (`feature/booking-calendar`, `fix/...`, `chore/...`).
 - Каждая ветка реализует **одну** задачу / мини-сценарий.
 
@@ -43,7 +43,7 @@
 ## Squash перед пушем
 
 Ветка может содержать промежуточные коммиты во время разработки. Перед пушем
-сжимаем **только новые** коммиты этой ветки (не коммиты, уже существующие в `master`)
+сжимаем **только новые** коммиты этой ветки (не коммиты, уже существующие в `stayledger-cline`)
 в один коммит с тегом и описанием:
 
 ```
@@ -51,25 +51,25 @@
 [NO_TASK] <feature summary>
 ```
 
-Используем `git rebase -i` или `git reset --soft` onto `master`, затем один коммит.
+Используем `git rebase -i` или `git reset --soft` onto `stayledger-cline`, затем один коммит.
 
 ## Rebase перед каждым пушем
 
 ```bash
 git fetch origin
-git switch master
-git rebase origin/master        # или: git pull --ff-only
+git switch stayledger-cline
+git rebase origin/stayledger-cline        # или: git pull --ff-only
 git switch <my-branch>
-git rebase master               # подтягиваем master в рабочую ветку
+git rebase stayledger-cline               # подтягиваем stayledger-cline в рабочую ветку
 # решаем конфликты, прогоняем тесты (см. docs/architecture.md)
 git push --force-with-lease     # никогда просто --force / -f
 ```
 
-Повторяем этот цикл **перед каждым** пушем, не только первым. После мержа pull request'а удаляем ветку и начинаем следующую от свежего `master`.
+Повторяем этот цикл **перед каждым** пушем, не только первым. После мержа pull request'а удаляем ветку и начинаем следующую от свежего `stayledger-cline`.
 
 ## Конфликты
 
-- Разрешаем конфликты в рабочей ветке; никогда не переписываем и не разрешаем внутри `master`.
+- Разрешаем конфликты в рабочей ветке; никогда не переписываем и не разрешаем внутри `stayledger-cline`.
 - Перед пушем прогоняем тесты: unit для мапперов/фабрик, integration для портов, MockWebServer для Telegram HTTP, e2e happy path в конце мини-сценария.
 
 ## Локальные настройки (один раз на машину)
@@ -91,9 +91,10 @@ chmod +x hooks/pre-push   # на Windows: Git Bash или `attrib +R hooks/pre-p
 ```
 
 Хук проверяет:
-- Текущая ветка — не `master`
-- Ровно 1 коммит впереди от `origin/master` (сжатый)
+- Текущая ветка — не `stayledger-cline`
+- Ровно 1 коммит впереди от `origin/stayledger-cline` (сжатый)
 - Субъект последнего коммита соответствует `[<task-number>] <summary>` или `[NO_TASK] <summary>`
+- Есть одобренный pull request (хотя бы 1 approval)
 
 Байпас возможен через `--no-verify` (намеренное переопределение, не по умолчанию).
 
