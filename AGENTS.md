@@ -9,7 +9,7 @@ Codex reads this file as the repository's project guidance. Read it before makin
 - `docs/git-workflow.md` — branch, commit-message, and pull-request policy
 - `docs/sdd.md` — Spec Driven Development principles
 
-Specifications live in `openspec/specs/<capability>/spec.md` (OpenSpec). Each mini-scenario maps 1:1 to a capability spec; `package-info.java` must point at it.
+Specifications live in `openspec/specs/<capability>/spec.md` (OpenSpec). Each mini-scenario maps 1:1 to a capability spec; `package-info.java` must point at it. See `docs/sdd.md` for the specification workflow.
 
 ## Universal project rules
 
@@ -19,7 +19,7 @@ These rules apply to all files in the StayLedger project.
 - Follow the existing code style and conventions of the project.
 - Commit messages must start with a task tag: `[NO_TASK]` or `[<task-number>]`.
 - Never commit directly to `master`; use branches and pull requests.
-- The specification (`docs/sdd.md`) is the single source of truth for new features.
+- OpenSpec capability specifications are the single source of truth for product behavior; follow `docs/sdd.md` for the SDD workflow.
 
 ## Architecture
 
@@ -55,4 +55,4 @@ Follow `docs/codestyle.md` for examples and full rules. Do not mix other nullabi
 
 ## Spec Driven Development (SDD)
 
-Before implementing new features, read `docs/sdd.md` — the specification is the single source of truth here. Changes to the specification must be documented in `docs/sdd.md`. These SDD rules are contained in this section.
+Before implementing new features or changing product behavior, follow the OpenSpec workflow described in `docs/sdd.md`. Capability specifications in `openspec/specs/` are the source of truth; update them through OpenSpec change artifacts. These SDD rules are contained in this section.
