@@ -83,7 +83,7 @@ Keep capability ids aligned with mini-scenario names. Add a row when introducing
 ## Mini-scenario ports
 
 Port naming and package conventions are described in
-[docs/codestyle.md](codestyle.md).
+[rules/codestyle.md](codestyle.md).
 
 An **incoming port** (`...In`) is called by an adapter (or another application
 service). It accepts a **command or request** type, not a Spring Event. An

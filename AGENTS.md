@@ -4,12 +4,12 @@ Codex reads this file as the repository's project guidance. Read it before makin
 
 ## Project documentation
 
-- `docs/architecture.md` — DDD, modular monolith, and mini-scenarios
-- `docs/codestyle.md` — Java code style and conventions
-- `docs/git-workflow.md` — branch, commit-message, and pull-request policy
-- `docs/sdd.md` — Spec Driven Development principles
+- `rules/architecture.md` — DDD, modular monolith, and mini-scenarios
+- `rules/codestyle.md` — Java code style and conventions
+- `rules/git-workflow.md` — branch, commit-message, and pull-request policy
+- `rules/sdd.md` — Spec Driven Development principles
 
-Specifications live in `openspec/specs/<capability>/spec.md` (OpenSpec). Each mini-scenario maps 1:1 to a capability spec; `package-info.java` must point at it. See `docs/sdd.md` for the specification workflow.
+Specifications live in `openspec/specs/<capability>/spec.md` (OpenSpec). Each mini-scenario maps 1:1 to a capability spec; `package-info.java` must point at it. See `rules/sdd.md` for the specification workflow.
 
 ## Universal project rules
 
@@ -19,11 +19,11 @@ These rules apply to all files in the StayLedger project.
 - Follow the existing code style and conventions of the project.
 - Commit messages must start with a task tag: `[NO_TASK]` or `[<task-number>]`.
 - Never commit directly to `master`; use branches and pull requests.
-- OpenSpec capability specifications are the single source of truth for product behavior; follow `docs/sdd.md` for the SDD workflow.
+- OpenSpec capability specifications are the single source of truth for product behavior; follow `rules/sdd.md` for the SDD workflow.
 
 ## Architecture
 
-Follow `docs/architecture.md` before changing structure, ports, or tests. Do not invent modules outside that document.
+Follow `rules/architecture.md` before changing structure, ports, or tests. Do not invent modules outside that document.
 
 - Slice each mini-scenario as `core-api` + `core-impl` + only the adapters it needs (`_infra`). Wire the app in `_ms`.
 - Incoming ports (`...In`) take a command/request. Spring Events are transport **between** mini-scenarios only, never the `...In` argument.
@@ -33,7 +33,7 @@ Follow `docs/architecture.md` before changing structure, ports, or tests. Do not
 
 ## Git workflow
 
-Follow `docs/git-workflow.md`. The integration branch is `stayledger-codex`.
+Follow `rules/git-workflow.md`. The integration branch is `stayledger-codex`.
 
 - Never commit or push directly to `stayledger-codex`; land changes via a branch plus a pull request.
 - Before every push: `git fetch`, update `stayledger-codex` from `origin/stayledger-codex`, rebase the working branch onto `stayledger-codex`, then push.
@@ -44,7 +44,7 @@ Follow `docs/git-workflow.md`. The integration branch is `stayledger-codex`.
 
 ## Java style (for `.java` files)
 
-Follow `docs/codestyle.md` for examples and full rules. Do not mix other nullability annotations.
+Follow `rules/codestyle.md` for examples and full rules. Do not mix other nullability annotations.
 
 - Immutable carriers (DTO, VO, command/request, criteria, event) are `record`s. No Lombok `@Data`/`@Builder` on records.
 - Lombok `@Data` and `@Builder(toBuilder = true)` only on mutable types that need them (typically JPA entities).
@@ -55,4 +55,4 @@ Follow `docs/codestyle.md` for examples and full rules. Do not mix other nullabi
 
 ## Spec Driven Development (SDD)
 
-Before implementing new features or changing product behavior, follow the OpenSpec workflow described in `docs/sdd.md`. Capability specifications in `openspec/specs/` are the source of truth; update them through OpenSpec change artifacts. These SDD rules are contained in this section.
+Before implementing new features or changing product behavior, follow the OpenSpec workflow described in `rules/sdd.md`. Capability specifications in `openspec/specs/` are the source of truth; update them through OpenSpec change artifacts. These SDD rules are contained in this section.
