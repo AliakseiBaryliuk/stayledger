@@ -127,7 +127,7 @@ Ports are the domain interfaces of a mini-scenario. The naming rules are:
   with `...In`, while the argument it accepts is named after that type **without**
   the `...In` suffix (e.g. port `<Name>In` accepts `<Name>`). The argument is not a
   Spring Event; events are inter-scenario transport only (see
-  [docs/architecture.md](architecture.md)).
+  [rules/architecture.md](architecture.md)).
 - An **OutgoingPort** class name must end with `...Out`.
 - Always add a **Javadoc** to every port interface.
 

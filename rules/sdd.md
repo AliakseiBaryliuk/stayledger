@@ -4,9 +4,13 @@ This document describes the Spec Driven Development (SDD) process used by StayLe
 
 ## Source of truth
 
-OpenSpec capability specifications under `openspec/specs/<capability>/spec.md` are the single source of truth for product behavior. Each mini-scenario maps 1:1 to a capability specification. See [docs/architecture.md](architecture.md) for the architecture and capability map.
+OpenSpec capability specifications under `openspec/specs/<capability>/spec.md` are the single source of truth for product behavior. Each mini-scenario maps 1:1 to a capability specification. See [rules/architecture.md](architecture.md) for the architecture and capability map.
 
 This document defines the process for creating, reviewing, implementing, and maintaining those specifications; it does not replace the capability specifications.
+
+## Package documentation
+
+Each `package-info.java` Javadoc starts with the OpenSpec change name that created the package, followed by ` - ` and a short description. Use the change directory name from `openspec/changes/<change-name>/`.
 
 ## Change workflow
 

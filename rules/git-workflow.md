@@ -14,12 +14,14 @@ The integration branch is `stayledger-codex` (`origin/stayledger-codex`). `maste
 Every subject starts with a task tag, followed by a concise summary:
 
 ```
+[<openspec-change-name>] <concise summary>
 [NO_TASK] <concise summary>
 [<task-number>] <concise summary>
 ```
 
-- `[NO_TASK]` — no tracker task for this change (for example, work that exists only as an OpenSpec change, or a mini-scenario whose `package-info.java` records no task id).
-- `[<task-number>]` — the tracker id exactly as it is (`[1234]`, `[SL-42]`). It must match the task id recorded in the `package-info.java` of the mini-scenario the commit touches (see `docs/architecture.md`), so the tag and the code point at the same task. Never invent a number.
+- `[<openspec-change-name>]` — the change was carried out through OpenSpec. Use the change directory name from `openspec/changes/` (or its archived directory), for example `[initialize-project-structure]`.
+- `[NO_TASK]` — the change was carried out directly, without an OpenSpec change, and has no tracker task id.
+- `[<task-number>]` — the tracker id exactly as it is (`[1234]`, `[SL-42]`). It must match the task id recorded in the `package-info.java` of the mini-scenario the commit touches (see `rules/architecture.md`), so the tag and the code point at the same task. Never invent a number.
 - Summary: short, imperative, to the point; no filler ("some fixes", "WIP"), no trailing period.
 - Commit messages are written in English, like the rest of the repository.
 - Optional body: why the change is needed. Keep it brief.
@@ -27,8 +29,8 @@ Every subject starts with a task tag, followed by a concise summary:
 Examples:
 
 ```
-[NO_TASK] add git workflow rules
-[NO_TASK] reject overlapping bookings
+[update-git-workflow] add OpenSpec commit tag rules
+[NO_TASK] update project guidance directly
 [1234] add git workflow rules
 [1234] reject overlapping bookings
 ```
@@ -48,7 +50,7 @@ git switch stayledger-codex
 git rebase origin/stayledger-codex        # or: git pull --ff-only
 git switch <my-branch>
 git rebase stayledger-codex               # bring the integration branch into the working branch
-# resolve conflicts, run the tests from docs/architecture.md
+# resolve conflicts, run the tests from rules/architecture.md
 git push --force-with-lease     # never plain --force / -f
 ```
 
