@@ -26,8 +26,8 @@ These rules apply to all files in the StayLedger project.
 Follow `rules/architecture.md` before changing structure, ports, or tests. Do not invent modules outside that document.
 
 - Slice each mini-scenario as `core-api` + `core-impl` + only the adapters it needs (`_infra`). Wire the app in `_ms`.
-- Incoming ports (`...In`) take a command/request. Spring Events are transport **between** mini-scenarios only, never the `...In` argument.
-- Pass `AggregateRoot` only to `postgres_adapter`. Other `...Out` ports get complete DTOs or criteria.
+- Incoming ports take a command/request. Spring Events are transport **between** mini-scenarios only, never an incoming-port argument.
+- Pass `AggregateRoot` only to `postgres_adapter`. Other outgoing ports get complete DTOs or criteria.
 - Map a mini-scenario 1:1 to `openspec/specs/<capability>/spec.md`. Point `package-info.java` at that spec.
 - Tests: unit for mappers/factories, integration for ports, MockWebServer for Telegram HTTP, e2e happy path last in `_ms`.
 
@@ -49,7 +49,7 @@ Follow `rules/codestyle.md` for examples and full rules. Do not mix other nullab
 - Immutable carriers (DTO, VO, command/request, criteria, event) are `record`s. No Lombok `@Data`/`@Builder` on records.
 - Lombok `@Data` and `@Builder(toBuilder = true)` only on mutable types that need them (typically JPA entities).
 - Nullability: `jakarta.annotation.Nonnull` and `jakarta.annotation.Nullable` on every field, parameter, and return. Return annotation goes on its own line above the method.
-- Ports: `...In` / `...Out` in `com.stayledger.<mini-scenario>.<state>.port.incoming|outgoing`. Field names drop the `In`/`Out` suffix.
+- Ports: follow the module-specific packages and naming rules in `rules/codestyle.md`.
 - MapStruct `AToBMapper.map` when mapping is 1:1 or at most three `@Mapping`s; otherwise `BFactory.create`.
 - External calls (Telegram, LLM) go through Resilience4j.
 

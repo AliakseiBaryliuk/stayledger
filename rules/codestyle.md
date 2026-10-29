@@ -120,15 +120,21 @@ public String get(
 
 Ports are the domain interfaces of a mini-scenario. The naming rules are:
 
-- Port names follow the package layout `com.stayledger.<mini-scenario>.<state>.port.*`:
-  - **Incoming ports** live under `com.stayledger.<mini-scenario>.<state>.port.incoming`.
-  - **Outgoing ports** live under `com.stayledger.<mini-scenario>.<state>.port.outgoing`.
-- An **IncomingPort** accepts a **command or request**. Its class name must end
-  with `...In`, while the argument it accepts is named after that type **without**
-  the `...In` suffix (e.g. port `<Name>In` accepts `<Name>`). The argument is not a
-  Spring Event; events are inter-scenario transport only (see
-  [rules/architecture.md](architecture.md)).
-- An **OutgoingPort** class name must end with `...Out`.
+- **Core API incoming interfaces** live under
+  `com.stayledger.<mini-scenario>.<state>.port.incoming` and are named
+  `<UseCase>IncomingPort`.
+- **Core API outgoing interfaces** live under
+  `com.stayledger.<mini-scenario>.<state>.port.outgoing` and are named
+  `<UseCase>OutgoingPort`.
+- A database outgoing interface is named `<UseCase>ReadOnlyOutgoingPort` for a
+  read-only operation or `<UseCase>WriteOnlyOutgoingPort` for a write operation.
+  Do not use an unqualified `<UseCase>OutgoingPort` for a database operation.
+- **Core Impl incoming-port implementations** live under
+  `com.stayledger.application.<mini-scenario>.<state>.port.incoming` and are
+  named `<UseCase>IncomingPort`. They implement the matching Core API incoming
+  interface.
+- An incoming port accepts a **command or request**, never a Spring Event. Events
+  are inter-scenario transport only; see [rules/architecture.md](architecture.md).
 - Always add a **Javadoc** to every port interface.
 
 ## Mappings and naming convention
@@ -142,7 +148,7 @@ Ports are the domain interfaces of a mini-scenario. The naming rules are:
   ```
 
   - Name: **`AToBMapper`**.
-  - Package: `com.stayledger.<mini-scenario>.<state>.mapper`.
+  - Package: `com.stayledger.application.<mini-scenario>.<state>.mapper`.
 
 - If the mapping is **complex**, create a **factory** instead, with the method:
 
@@ -151,4 +157,4 @@ Ports are the domain interfaces of a mini-scenario. The naming rules are:
   ```
 
   - Name: **`BFactory`**.
-  - Package: `com.stayledger.<mini-scenario>.<state>.factory`.
+  - Package: `com.stayledger.application.<mini-scenario>.<state>.factory`.

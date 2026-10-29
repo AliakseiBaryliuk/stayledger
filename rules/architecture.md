@@ -20,8 +20,9 @@ document describes structure and conventions only.
 └────────────────────────────────────────────────────────────────────────┘
       │  ports: ...In / ...Out
 ┌─ _core ────────────────────────────────────────────────────────────────┐
-│ core-api — ...In / ...Out ports, DTOs, commands/requests, events       │
-│ core-impl — use cases, AggregateRoot (domain logic)                    │
+│ core-api — domain entities/AggregateRoot, ...In / ...Out ports, DTOs,  │
+│             commands/requests, events                                  │
+│ core-impl — use cases and application-service orchestration            │
 └────────────────────────────────────────────────────────────────────────┘
       │  Spring Events (between mini-scenarios only)
       ▼
@@ -34,9 +35,12 @@ A mini-scenario is implemented as its **core** part (`core-api` + `core-impl`) p
 
 ### `_core` — domain and application layer
 
-- **`core-api`** — domain interfaces, DTOs, commands/requests, and events used as inter-scenario transport.
+- **`core-api`** — domain entities and aggregate roots, domain interfaces,
+  DTOs, commands/requests, and events used as inter-scenario transport. Its
+  types are consumed by `core-impl` and by outgoing port contracts.
   - Interfaces are split into two types: **IncomingPort** and **OutgoingPort**.
-- **`core-impl`** — domain logic, use cases, entities (aggregate roots).
+- **`core-impl`** — use cases and application-service orchestration. It depends
+  on `core-api` and implements incoming ports.
 
 ### `_infra` — infrastructure adapters
 
@@ -99,11 +103,12 @@ calls `...In`.
 ```
 adapter / event listener
    ->  ...In command/request   (incoming port)
-   ->  AggregateRoot           (core-impl, when working with the DB)
+   ->  AggregateRoot           (core-api domain model, when working with the DB)
    ->  ...Out                  (outgoing port)
 ```
 
-- The **`AggregateRoot`** is passed **only** to `postgres_adapter`.
+- The **`AggregateRoot`** is defined in `core-api` and is passed **only** to
+  `postgres_adapter` through its outgoing port.
 - For a **`get...`** method, a **`Criteria`** may be passed instead.
 - In either case, the object passed to the outgoing port must contain **all the data
   needed to retrieve or update** the information.
