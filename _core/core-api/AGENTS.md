@@ -11,12 +11,6 @@ immutable transport types, port interfaces, entities, and aggregate roots. It
 contains no use-case implementation, Spring configuration, controller, adapter,
 repository, mapper, factory, or persistence-specific JPA implementation.
 
-`core-impl` depends on this module and implements incoming ports through use
-cases and application-service orchestration. Keep domain invariants in the
-aggregate root. An aggregate root may be passed only to `postgres_adapter`; all
-other outgoing port contracts receive complete DTOs or criteria, as defined in
-`rules/architecture.md`.
-
 ## Package Layout and Ownership
 
 Use the lowercase base package `com.stayledger`.
@@ -25,7 +19,6 @@ Use the lowercase base package `com.stayledger`.
 com.stayledger
 ├── shared
 │   ├── constant
-│   ├── event
 │   └── exception
 └── <capability>
     └── <state>
@@ -50,9 +43,8 @@ com.stayledger
   roots and their domain invariants. These are domain types, not JPA persistence
   entities; persistence mapping remains in `postgres_adapter`.
 - `shared` is reserved for genuinely cross-mini-scenario API data. Put shared
-  constants in `shared.constant`, cross-mini-scenario Spring event contracts in
-  `shared.event`, and shared exception types in `shared.exception`. Do not place
-  mini-scenario-specific types in `shared`.
+  constants in `shared.constant` and shared exception types in
+  `shared.exception`. Do not place mini-scenario-specific types in `shared`.
 - Do not create implementation, adapter, persistence, or framework packages in
   this module.
 
@@ -67,8 +59,7 @@ com.stayledger
   [rules/codestyle.md](../../rules/codestyle.md).
 - Incoming ports receive a command or request. They are called by an adapter,
   event listener, or application service; a Spring Event is never an
-  incoming-port argument. Outgoing ports are invoked by the incoming-port
-  implementation in `core-impl` to perform business use cases through adapters.
+  incoming-port argument.
 - Spring Events are inter-mini-scenario transport only. A receiving listener
   maps an event to its own command or request before invoking its incoming port.
 - Every port interface has Javadoc describing its responsibility. Every method
@@ -98,6 +89,5 @@ verify every production package `com.stayledger.<capability>..` depends only on:
 - Java platform and Jakarta annotation types.
 
 The tests must reject direct dependencies from one mini-scenario package to
-another. Cross-mini-scenario data must be represented by a shared contract,
-normally an event in `shared.event`. Add or update the relevant ArchUnit test
-whenever a package boundary is introduced or changed.
+another. Add or update the relevant ArchUnit test whenever a package boundary
+is introduced or changed.
