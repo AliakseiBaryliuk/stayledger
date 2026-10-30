@@ -1,0 +1,7 @@
+schema: spec-driven
+
+context: |
+  StayLedger is a DDD modular monolith organized into mini-scenarios.
+  Each mini-scenario maps 1:1 to a capability specification in
+  openspec/specs/<capability>/spec.md. Follow AGENTS.md and rules/architecture.md
+  for project-wide implementation and architecture constraints.
