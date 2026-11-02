@@ -42,6 +42,8 @@ The tracked `hooks/commit-msg` hook checks the subject and requires the matching
 
 ## Before opening a pull request
 
+- For OpenSpec work, archive the completed change and include the archive in the branch before opening a PR. Run `python scripts/check_openspec_archive.py --base stayledger-codex --head HEAD` after committing. If it names an unarchived change, stop and warn about the missing archive. Do not open the PR until it is archived.
+- The `OpenSpec archive / archive` GitHub Actions check runs on PRs targeting `stayledger-codex`. Make that status check required in the branch protection or ruleset for `stayledger-codex` to prevent merging an unarchived change. GitHub Actions runs after PR creation, so repository automation cannot prevent the PR form from being submitted; the local preflight and this required check cover the two stages.
 - Squash all commits added on the working branch since it branched from `stayledger-codex` into one commit before creating the pull request. Do not squash commits inherited from `stayledger-codex`.
 - The squashed commit subject must follow the task-tag format above.
 
