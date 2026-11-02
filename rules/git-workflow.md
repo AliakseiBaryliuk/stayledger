@@ -22,6 +22,7 @@ Every subject starts with a task tag, followed by a concise summary:
 - `[<openspec-change-name>]` — the change was carried out through OpenSpec. Use the change directory name from `openspec/changes/` (or its archived directory), for example `[initialize-project-structure]`.
 - `[NO_TASK]` — the change was carried out directly, without an OpenSpec change, and has no tracker task id.
 - `[<task-number>]` — the tracker id exactly as it is (`[1234]`, `[SL-42]`). It must match the task id recorded in the `package-info.java` of the mini-scenario the commit touches (see `rules/architecture.md`), so the tag and the code point at the same task. Never invent a number.
+- Select the OpenSpec change tag first when the commit belongs to an OpenSpec change, even if a tracker id exists. Otherwise use the tracker id when one exists; use `[NO_TASK]` only when neither applies.
 - Summary: short, imperative, to the point; no filler ("some fixes", "WIP"), no trailing period.
 - Commit messages are written in English, like the rest of the repository.
 - Optional body: why the change is needed. Keep it brief.
@@ -36,6 +37,8 @@ Examples:
 ```
 
 Commits made before this rule (`init app`, `define config`) stay as they are; new commits use the tag.
+
+The tracked `hooks/commit-msg` hook checks the subject and requires the matching OpenSpec change tag when staged files belong to a change or the current `<type>/<change-name>` branch has an active change directory. Enable it in each clone with `git config core.hooksPath hooks`. Git does not install this repository hook automatically; a hook can also be bypassed with `--no-verify`.
 
 ## Before opening a pull request
 

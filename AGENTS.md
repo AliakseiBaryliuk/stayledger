@@ -17,7 +17,7 @@ These rules apply to all files in the StayLedger project.
 
 - Read the applicable project guidance in this file before making changes.
 - Follow the existing code style and conventions of the project.
-- Commit messages must start with a task tag: `[NO_TASK]` or `[<task-number>]`.
+- Commit messages must follow the tag policy in `rules/git-workflow.md`: use `[<openspec-change-name>]` for OpenSpec work, `[<task-number>]` for a tracked task outside OpenSpec, and `[NO_TASK]` only when neither applies.
 - Never commit directly to `master`; use branches and pull requests.
 - OpenSpec capability specifications are the single source of truth for product behavior; follow `rules/sdd.md` for the SDD workflow.
 
@@ -35,12 +35,14 @@ Follow `rules/architecture.md` before changing structure, ports, or tests. Do no
 
 Follow `rules/git-workflow.md`. The integration branch is `stayledger-codex`.
 
+- Before the first repository write for a new task, including an OpenSpec artifact, inspect `git status --short --branch` and identify the required working branch and source specification. Fetch `origin`, update local `stayledger-codex` from `origin/stayledger-codex`, and verify that any named source specification exists in the integration branch. Create the working branch from the updated `stayledger-codex` before editing. If the source specification is absent, stop and report the dependency. If unrelated local changes prevent a safe branch switch, stop and report them without moving or discarding work.
+- When continuing an existing task, verify that the current branch is its intended working branch and was created from `stayledger-codex`; preserve its existing worktree changes instead of recreating the branch. Bring it up to date before push as required below.
 - Never commit or push directly to `stayledger-codex`; land changes via a branch plus a pull request.
 - Before every push: `git fetch`, update `stayledger-codex` from `origin/stayledger-codex`, rebase the working branch onto `stayledger-codex`, then push.
 - After a rebase push use `--force-with-lease`; never `--force`/`-f`.
 - Never rewrite `stayledger-codex`; resolve conflicts only in the working branch.
-- Commit subjects start with a task tag plus a concise English summary: `[NO_TASK] <summary>` when there is no tracker task, `[<task-number>] <summary>` when there is one. Never invent a number.
-- The `[<task-number>]` tag must match the task id recorded in the `package-info.java` of the mini-scenario the change touches; when that file records none, use `[NO_TASK]`.
+- Commit subjects start with the tag selected by `rules/git-workflow.md` plus a concise English summary. An OpenSpec change uses its change name even when no tracker task id is recorded in `package-info.java`. Never invent a task number.
+- For work outside OpenSpec, the `[<task-number>]` tag must match the task id recorded in the mini-scenario's `package-info.java`; use `[NO_TASK]` only when there is no applicable OpenSpec change or tracker task.
 
 ## Java style (for `.java` files)
 

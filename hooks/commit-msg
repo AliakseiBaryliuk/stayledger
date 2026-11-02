@@ -1,0 +1,51 @@
+#!/bin/sh
+set -eu
+
+message_file=${1:?commit message file is required}
+subject=$(sed -n '1p' "$message_file" | tr -d '\r')
+
+if ! printf '%s\n' "$subject" | grep -Eq '^\[[A-Za-z0-9][A-Za-z0-9._-]*\] [A-Za-z][^[:cntrl:]]*$'; then
+    printf '%s\n' 'Invalid commit subject. Use [<openspec-change-name>], [<task-number>], or [NO_TASK] followed by an English summary.' >&2
+    exit 1
+fi
+
+tag=${subject%%]*}
+tag=${tag#\[}
+
+staged_changes=$(
+    git diff --cached --name-only --diff-filter=ACMR |
+        awk -F/ '
+            $1 == "openspec" && $2 == "changes" && $3 != "archive" && $3 != "" { print $3 }
+            $1 == "openspec" && $2 == "changes" && $3 == "archive" && $4 ~ /^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-/ {
+                sub(/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-/, "", $4)
+                print $4
+            }
+        '
+)
+
+branch_change=
+branch=$(git symbolic-ref --quiet --short HEAD || true)
+case "$branch" in
+    */*)
+        candidate=${branch#*/}
+        if [ -d "openspec/changes/$candidate" ]; then
+            branch_change=$candidate
+        fi
+        ;;
+esac
+
+changes=$(printf '%s\n%s\n' "$staged_changes" "$branch_change" | sed '/^$/d' | sort -u)
+
+case "$changes" in
+    '') exit 0 ;;
+    *'
+'*)
+        printf 'Commit matches multiple OpenSpec changes:\n%s\nSplit the commit or use a branch that identifies one change.\n' "$changes" >&2
+        exit 1
+        ;;
+esac
+
+if [ "$tag" != "$changes" ]; then
+    printf 'Expected [%s] for this OpenSpec change; found [%s].\n' "$changes" "$tag" >&2
+    exit 1
+fi
