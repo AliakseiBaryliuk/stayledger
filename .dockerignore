@@ -1,0 +1,14 @@
+.git
+.github
+.agents
+.gradle
+.idea
+.vscode
+**/build
+**/.env
+*.log
+openspec
+docs
+rules
+README.md
+AGENTS.md

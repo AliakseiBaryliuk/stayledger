@@ -1,0 +1,13 @@
+services:
+  nexus:
+    image: ${NEXUS_IMAGE:-sonatype/nexus3:3.96.3}
+    container_name: stayledger-nexus
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8082:8081"
+      - "127.0.0.1:5000:5000"
+    volumes:
+      - nexus-data:/nexus-data
+
+volumes:
+  nexus-data:
