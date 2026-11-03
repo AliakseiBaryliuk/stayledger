@@ -12,4 +12,4 @@ These are review specifications to be approved before creating OpenSpec changes.
 | 6 | [Jenkins pipeline](06-jenkins-pipeline.md) | 1–5 |
 | 7 | [Prometheus and Grafana](07-monitoring.md) | 1, 3 |
 
-Each stage is implemented in its own branch from `stayledger-codex` and delivered through a separate PR. A separate OpenSpec change is created after its review; no application or infrastructure changes are made before that.
+Each stage is implemented in its own branch from `stayledger-codex-develop` and delivered through a separate PR to that branch. A production delivery is later promoted through a `release/RL-xx` branch; develop never merges directly into `stayledger-codex`. A separate OpenSpec change is created after stage review; no application or infrastructure changes are made before that.
