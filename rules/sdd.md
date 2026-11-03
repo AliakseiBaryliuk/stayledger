@@ -16,6 +16,6 @@ Each `package-info.java` Javadoc starts with the OpenSpec change name that creat
 
 1. Use the OpenSpec `propose` workflow to create a change proposal, design, tasks, and specification deltas before implementation.
 2. Review and agree on the planning artifacts before starting implementation with the OpenSpec `apply` workflow.
-3. After implementation and verification, archive the completed change so its specification deltas are incorporated into the capability specifications. Commit the archive before opening a PR to `stayledger-codex`; the archive check must pass before merge.
+3. After implementation and verification, archive the completed change so its specification deltas are incorporated into the capability specifications. Commit the archive before opening the normal PR to `stayledger-codex-develop`; the archive check must pass before merge. A final release PR to `stayledger-codex` carries only already integrated and archived work.
 
 Keep OpenSpec project context in `openspec/config.yaml`. Keep architecture and coding conventions in their project documentation and follow `AGENTS.md`.
