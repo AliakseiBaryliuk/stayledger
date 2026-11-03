@@ -1,13 +1,25 @@
 # StayLedger — Git workflow
 
-The integration branch is `stayledger-codex` (`origin/stayledger-codex`). `master` and `origin/main` are legacy; do not target them.
+`stayledger-codex` is the production branch. `stayledger-codex-develop`
+(`origin/stayledger-codex-develop`) is the development integration branch.
+`master` and `origin/main` are legacy; do not target them.
 
-## Integration branch only via pull request
+## Branches and pull requests
 
-- Never commit or push directly to `stayledger-codex`.
-- Flow: branch off `stayledger-codex` -> commit(s) -> push the branch -> pull request -> merge.
-- Branch naming: `<type>/<short-topic>` (`feature/booking-calendar`, `fix/...`, `chore/...`).
-- Merge with **Rebase and merge** to keep a linear history; no merge commits into `stayledger-codex`.
+- Never commit or push directly to `stayledger-codex`, `stayledger-codex-develop`, or `release/RL-xx`.
+- Normal flow: branch from `stayledger-codex-develop` -> commit(s) -> PR to `stayledger-codex-develop` -> merge.
+- Normal branch naming is `<type>/<short-topic>` (`feature/booking-calendar`, `fix/...`, `chore/...`).
+- A release starts by cutting `release/RL-xx` from a stable develop version. Release fixes branch from it as `fix/RL-xx/<short-topic>` and target that same release branch.
+- `stayledger-codex-develop` never targets `stayledger-codex`. The final PR to production is only `release/RL-xx` -> `stayledger-codex`.
+- Normal and release-fix PRs use **Rebase and merge**. The final release PR may use the repository-approved merge strategy because its production tag is created after the merge.
+
+## Versions and release lifecycle
+
+- `gradle.properties` is the branch-owned default version. `-PappVersion` overrides it for a specific build.
+- A bootstrap or release cut advances develop to the next minor with a technical commit such as `version=0.3.0-SNAPSHOT` and an annotated `v0.3.0` marker tag. Marker tags do not publish artifacts or deploy.
+- A working branch builds the next patch SNAPSHOT of its target line. A merge queue for `stayledger-codex-develop` and each `release/RL-xx` serializes merges, creates the technical patch version commit, then creates its annotated `vX.Y.Z` tag and immutable non-production artifacts.
+- Every release-branch merge creates an automatic `release/RL-xx` -> `stayledger-codex-develop` sync PR. It preserves develop's `gradle.properties`; unresolved functional conflicts block the final release.
+- After all release sync PRs merge and testing passes, the final release PR builds with `-PappVersion=X.Y.Z-RELEASE`, deploys that exact production artifact, then creates `vX.Y.Z-RELEASE`. The release branch then closes.
 
 ## Commit messages
 
@@ -42,29 +54,29 @@ The tracked `hooks/commit-msg` hook checks the subject and requires the matching
 
 ## Before opening a pull request
 
-- When creating a PR for OpenSpec work, run `python scripts/check_openspec_archive.py --base stayledger-codex --head HEAD`. If it names an unarchived change, show the author a warning. The warning does not block PR creation.
-- The PR template repeats this warning and provides the command to verify the archive status.
-- Squash all commits added on the working branch since it branched from `stayledger-codex` into one commit before creating the pull request. Do not squash commits inherited from `stayledger-codex`.
+- When creating a PR for OpenSpec work, run `python scripts/check_openspec_archive.py --base <pr-target> --head HEAD`. Use `stayledger-codex-develop` for normal PRs, the relevant `release/RL-xx` for release fixes, and `stayledger-codex` only for the final release PR. If it names an unarchived change, show the author a warning. The warning does not block PR creation.
+- The PR template repeats this warning and provides commands for each PR target.
+- Squash all commits added on the working branch since it branched from its PR target into one commit before creating the pull request. Do not squash commits inherited from that target.
 - The squashed commit subject must follow the task-tag format above.
 
 ## Rebase before every push to remote
 
 ```bash
 git fetch origin
-git switch stayledger-codex
-git rebase origin/stayledger-codex        # or: git pull --ff-only
+git switch <pr-target>
+git rebase origin/<pr-target>              # or: git pull --ff-only
 git switch <my-branch>
-git rebase stayledger-codex               # bring the integration branch into the working branch
+git rebase <pr-target>                     # bring the target branch into the working branch
 # resolve conflicts, run the tests from rules/architecture.md
 git push --force-with-lease     # never plain --force / -f
 ```
 
 Repeat this cycle before **every** push, not just the first one. After the pull request is
-merged, delete the branch and start the next one from a fresh `stayledger-codex`.
+merged, delete the branch and start the next one from the appropriate target branch.
 
 ## Conflicts
 
-- Resolve conflicts in the working branch; never rewrite or resolve inside `stayledger-codex`.
+- Resolve conflicts in the working branch; never rewrite or resolve inside an integration or release branch.
 - Re-run tests before pushing: unit for mappers/factories, integration for ports, e2e happy path last.
 
 ## Local helpers (once per machine)

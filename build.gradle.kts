@@ -2,9 +2,13 @@ plugins {
     id("org.springframework.boot") version "4.1.2" apply false
 }
 
+val appVersion = providers.gradleProperty("appVersion")
+    .orElse(providers.gradleProperty("version"))
+    .get()
+
 allprojects {
     group = "com.stayledger"
-    version = "0.1.0-SNAPSHOT"
+    version = appVersion
 
     repositories {
         mavenCentral()

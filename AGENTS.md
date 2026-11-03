@@ -33,15 +33,17 @@ Follow `rules/architecture.md` before changing structure, ports, or tests. Do no
 
 ## Git workflow
 
-Follow `rules/git-workflow.md`. The integration branch is `stayledger-codex`.
+Follow `rules/git-workflow.md`. `stayledger-codex` is the production branch and
+`stayledger-codex-develop` is the development integration branch.
 
-- Before the first repository write for a new task, including an OpenSpec artifact, inspect `git status --short --branch` and identify the required working branch and source specification. Fetch `origin`, update local `stayledger-codex` from `origin/stayledger-codex`, and verify that any named source specification exists in the integration branch. Create the working branch from the updated `stayledger-codex` before editing. If the source specification is absent, stop and report the dependency. If unrelated local changes prevent a safe branch switch, stop and report them without moving or discarding work.
-- When continuing an existing task, verify that the current branch is its intended working branch and was created from `stayledger-codex`; preserve its existing worktree changes instead of recreating the branch. Bring it up to date before push as required below.
-- Never commit or push directly to `stayledger-codex`; land changes via a branch plus a pull request.
+- Before the first repository write for a new task, including an OpenSpec artifact, inspect `git status --short --branch` and identify the required working branch and source specification. Fetch `origin`, update local `stayledger-codex-develop` from `origin/stayledger-codex-develop`, and verify that any named source specification exists in the integration branch. Create a normal working branch from the updated development branch before editing. Release fixes instead start from their target `release/RL-xx` branch. If the source specification is absent, stop and report the dependency. If unrelated local changes prevent a safe branch switch, stop and report them without moving or discarding work.
+- When continuing an existing task, verify that the current branch was created from its intended target branch; preserve its existing worktree changes instead of recreating the branch. Bring the target branch up to date before push as required below.
+- Never commit or push directly to `stayledger-codex`, `stayledger-codex-develop`, or `release/RL-xx`; land changes via a branch plus a pull request.
 - When asked to create a PR for OpenSpec work, run the OpenSpec archive check from `rules/git-workflow.md`. If it reports a missing archive, warn the user; the warning does not block PR creation.
-- Before every push: `git fetch`, update `stayledger-codex` from `origin/stayledger-codex`, rebase the working branch onto `stayledger-codex`, then push.
+- Normal `feature/*`, `fix/*`, and `chore/*` branches target `stayledger-codex-develop`. Only `release/RL-xx` branches may target `stayledger-codex`; `fix/RL-xx/*` branches target their release branch.
+- Before every push: `git fetch`, update the PR target branch from `origin`, rebase the working branch onto that target, then push.
 - After a rebase push use `--force-with-lease`; never `--force`/`-f`.
-- Never rewrite `stayledger-codex`; resolve conflicts only in the working branch.
+- Never rewrite an integration or release branch; resolve conflicts only in the working branch.
 - Commit subjects start with the tag selected by `rules/git-workflow.md` plus a concise English summary. An OpenSpec change uses its change name even when no tracker task id is recorded in `package-info.java`. Never invent a task number.
 - For work outside OpenSpec, the `[<task-number>]` tag must match the task id recorded in the mini-scenario's `package-info.java`; use `[NO_TASK]` only when there is no applicable OpenSpec change or tracker task.
 
