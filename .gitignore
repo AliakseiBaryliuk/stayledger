@@ -22,6 +22,7 @@ bin/
 .springBeans
 .sts4-cache
 .env
+docker/nexus/.env
 
 ### Logger ###
 *.log
