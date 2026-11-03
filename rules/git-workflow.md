@@ -38,12 +38,12 @@ Examples:
 
 Commits made before this rule (`init app`, `define config`) stay as they are; new commits use the tag.
 
-The tracked `hooks/commit-msg` hook checks the subject and requires the matching OpenSpec change tag when staged files belong to a change or the current `<type>/<change-name>` branch has an active change directory. Enable it in each clone with `git config core.hooksPath hooks`. Git does not install this repository hook automatically; a hook can also be bypassed with `--no-verify`.
+The tracked `hooks/commit-msg` hook checks the subject and requires the matching OpenSpec change tag when staged files belong to a change or the current `<type>/<change-name>` branch has an active change directory. Enable it in each clone with `git config core.hooksPath hooks`. Git does not install this repository hook automatically; it can be bypassed with `--no-verify`.
 
 ## Before opening a pull request
 
-- For OpenSpec work, archive the completed change and include the archive in the branch before opening a PR. Run `python scripts/check_openspec_archive.py --base stayledger-codex --head HEAD` after committing. If it names an unarchived change, stop and warn about the missing archive. Do not open the PR until it is archived.
-- The `OpenSpec archive / archive` GitHub Actions check runs on PRs targeting `stayledger-codex`. Make that status check required in the branch protection or ruleset for `stayledger-codex` to prevent merging an unarchived change. GitHub Actions runs after PR creation, so repository automation cannot prevent the PR form from being submitted; the local preflight and this required check cover the two stages.
+- When creating a PR for OpenSpec work, run `python scripts/check_openspec_archive.py --base stayledger-codex --head HEAD`. If it names an unarchived change, show the author a warning. The warning does not block PR creation.
+- The PR template repeats this warning and provides the command to verify the archive status.
 - Squash all commits added on the working branch since it branched from `stayledger-codex` into one commit before creating the pull request. Do not squash commits inherited from `stayledger-codex`.
 - The squashed commit subject must follow the task-tag format above.
 
