@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "stayledger.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "stayledger.labels" . | nindent 4 }}
+data:
+  SERVER_PORT: {{ .Values.config.serverPort | quote }}
