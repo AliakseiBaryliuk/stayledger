@@ -1,0 +1,6 @@
+image:
+  repository: localhost:5000/stayledger
+  tag: 0.2.0-SNAPSHOT
+
+existingSecret:
+  name: stayledger-runtime

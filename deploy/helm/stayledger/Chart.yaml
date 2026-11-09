@@ -1,0 +1,5 @@
+apiVersion: v2
+name: stayledger
+description: Helm chart for the StayLedger application
+type: application
+version: 0.1.0
