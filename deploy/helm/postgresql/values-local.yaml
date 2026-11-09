@@ -1,0 +1,29 @@
+# Values for Bitnami PostgreSQL chart 18.7.12 installed as release "stayledger"
+# in namespace "stayledger". Credentials are supplied only by the pre-existing
+# stayledger-runtime Secret; do not put their values in this file.
+
+architecture: standalone
+
+auth:
+  enablePostgresUser: true
+  username: stayledger
+  database: stayledger
+  existingSecret: stayledger-runtime
+  secretKeys:
+    adminPasswordKey: postgres-password
+    userPasswordKey: password
+
+primary:
+  persistence:
+    enabled: true
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+  persistentVolumeClaimRetentionPolicy:
+    enabled: true
+    whenScaled: Retain
+    whenDeleted: Retain
+
+metrics:
+  enabled: false
